@@ -1,42 +1,50 @@
 <template>
   <q-page padding>
-    <!-- content -->
+    <h1>{{Welcome}}</h1>
+     <q-btn color="white" text-color="black" label="Logout" @click="logout"/>
   </q-page>
 </template>
 
 <script>
-// const puppeteer = require('puppeteer');
 import axios from 'axios'
 export default {
   name: 'ScrapingPage',
   data () {
     return {
+      Welcome: 'Welcome Scraping App'
+    }
+  }, 
+  mounted () {
+    if (this.getToken === null) {
+      this.$router.push({ path: '/' })
+    }
+    this.authcheck()
+  },
+  computed: {
+    getToken: {
+      get () {
+        return localStorage.getItem('www.google.com')
+      }
     }
   },
-  mounted () {
-    this.scrapeSoccer();
-  },
   methods: {
-  //  async scrapeSoccer () {
-  //     const url = 'https://www.bet365.com/#/IP/B1';
-  //     const browser = puppeteer.launch();
-  //     const page =  browser.newPage();
-  //     page.goto(url);
-
-  //    const dimensions = page.evaluate(() => {
-  //     return document.querySelector("body").innerHTML;
-  //     });
-
-  //     console.warn(dimensions);
-  //     this.bods = dimensions
-  //     browser.close();
-
-  //   }
-    scrapeSoccer () {
-      axios.get('https://www.bet365.com/#/IP/B1')
-      .then((res) => {
-        console.warn(res);
-      });
+    authcheck () {
+       axios.post('http://127.0.0.1:8000/api/user/auth', {}, {headers: { Authorization: 'Bearer ' + localStorage.getItem('www.google.com')} })
+       .catch((err) => {
+         localStorage.removeItem('www.google.com')
+         this.$router.push({ path: '/' })
+       })
+    },
+    logout () {
+      axios.post('http://127.0.0.1:8000/api/user/logout', {},{ headers: { Authorization: 'Bearer ' + localStorage.getItem('www.google.com')} })
+      .then((response) => {
+        
+          localStorage.removeItem('www.google.com')
+          this.$router.push({ path: '/' })
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
   }
 }

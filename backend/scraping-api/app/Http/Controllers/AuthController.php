@@ -33,6 +33,9 @@ class AuthController extends Controller
         $accesstoken = $user->createToken('token')->accessToken;
         return response()->json(['user' => auth()->user(), 'access_token' => $accesstoken], 200);
     }
+    public function checkifauthenticated(Request $request) {
+        return response()->json('authenticated', 200);
+    }
 
     public function logout(Request $request) {
         Auth::user()->token()->revoke();
